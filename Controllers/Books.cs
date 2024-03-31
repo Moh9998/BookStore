@@ -35,16 +35,10 @@ namespace BookStore.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<Book?> UpdateBook(int  id)
+            public async Task<Book?> UpdateBook(int id, Book updatedBook)
         {
-            var book = await _books.UpdateBook(id);
-            if (book == null)
-            {
-                return null;
-            }
-            return book;
+            return await _books.UpdateBook(id, updatedBook);
         }
-
         [HttpDelete("{id}")]
         public async Task<Book> DeleteBook(int id)
         {
@@ -56,6 +50,11 @@ namespace BookStore.Controllers
         {
             return await _books.SearchBook(title);
             
-        }   
+        }
+        [HttpGet("filter")]
+        public async Task<List<Book>> FilterBooks(string filter)
+        {
+            return await _books.FilterBooks(filter);
+        }
     }
 }

@@ -3,6 +3,7 @@ using BookStore.Logic_Business.Interfaces;
 using BookStore.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace BookStore.Logic_Business.Repositories
 {
@@ -23,6 +24,7 @@ namespace BookStore.Logic_Business.Repositories
                 Author = book.Author,
                 Genre = book.Genre,
                 Price = book.Price,
+                BooksInStock = book.BooksInStock,
                 Avalibality = book.Avalibality,
                 DateAded = book.DateAded
             };
@@ -34,13 +36,24 @@ namespace BookStore.Logic_Business.Repositories
         public async Task<Book> DeleteBook(int id)
         {
             var book = await _context.Books.FindAsync(id);
-            if (book == null)
+            if (book is null)
             {
                 return null;
             }
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
             return book;
+        }
+
+        public async Task<List<Book>> FilterBooks(string filter)
+        {
+            var books = await _context.Books.Where
+                                (x => x.Genre == filter ||
+                                x.Author==filter||
+                                x.Title==filter)
+                                .ToListAsync();
+
+            return books;
         }
 
         public Task<Book> GetBook(int id)
@@ -57,7 +70,10 @@ namespace BookStore.Logic_Business.Repositories
 
         public async  Task<Book?> SearchBook(string result)
         {
-           var book = await _context.Books.FirstOrDefaultAsync(x => x.Title == result || x.Author == result || x.Genre == result);
+           var book = await _context.Books.FirstOrDefaultAsync
+                                        (x => x.Title == result
+                                        || x.Author == result
+                                        || x.Genre == result);
             if (book is null)
             {
                 return null;
@@ -66,20 +82,33 @@ namespace BookStore.Logic_Business.Repositories
 
         }
 
-        public async Task<Book?> UpdateBook(int id)
-        {
-            var result = _context.Books.First(x => x.Id == id);
-            if (result is null)
+        public async Task<Book?> UpdateBook(int id, Book updatedBook)
             {
-                return null;
+                var existingBook = await _context.Books.FirstOrDefaultAsync(x => x.Id == id);
+
+                if (existingBook == null)
+                {
+                    return null; // Book with the given ID not found
+                }
+
+                var type = typeof(Book);
+                var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+                foreach (var property in properties)
+                {
+                    var updatedValue = property.GetValue(updatedBook);
+                    if (updatedValue != null)
+                    {
+                        property.SetValue(existingBook, updatedValue);
+                    }
+                }
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+
+                return existingBook;
             }
-              
 
 
-
-            await _context.SaveChangesAsync();
-            return result;
-
-        }
-    }
+}
 }
