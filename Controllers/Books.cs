@@ -25,7 +25,7 @@ namespace BookStore.Controllers
         {
             return await _books.GetBooks();
         }
-
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(int id)
         {
@@ -34,34 +34,54 @@ namespace BookStore.Controllers
                 return Unauthorized("User is not authenticated");
             }
 
-            // Your logic to get the book by id
             var book = await _books.GetBook(id);
             if (book == null)
             {
-                return NotFound();
+                return NotFound("Book not found");
             }
 
             return Ok(book);
         }
 
-
+        [Authorize]
         [HttpPost]
-        public async Task<Book> AddBook(Book book)
+        public async Task<ActionResult<Book>> AddBook(Book book)
         {
-            return await _books.AddBook(book);
+            var addedBook = await _books.AddBook(book);
+            if (addedBook == null)
+            {
+                return BadRequest("Failed to add book");
+            }
+
+            return Ok("Book added successfully");
         }
-     
+
+        [Authorize]
         [HttpPut("{id}")]
-            public async Task<Book?> UpdateBook(int id, Book updatedBook)
+        public async Task<ActionResult<Book>> UpdateBook(int id, Book updatedBook)
         {
-            return await _books.UpdateBook(id, updatedBook);
+            var result = await _books.UpdateBook(id, updatedBook);
+            if (result == null)
+            {
+                return NotFound("Book not found");
+            }
+
+            return Ok("Book updated successfully");
         }
+
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<Book> DeleteBook(int id)
+        public async Task<ActionResult<Book>> DeleteBook(int id)
         {
-            return await _books.DeleteBook(id);
+            var deletedBook = await _books.DeleteBook(id);
+            if (deletedBook == null)
+            {
+                return NotFound("Book not found");
+            }
+
+            return Ok("Book deleted successfully");
         }
+
 
         [HttpGet("search")]
         public async Task<Book?> SearchBook(string title)

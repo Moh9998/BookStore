@@ -14,6 +14,12 @@ public class StoreContext : IdentityDbContext<IdentityUser>
         
 
     public DbSet<Book> Books { get; set; }
+
+    public DbSet<Cart> Carts { get; set; }
+
+    public DbSet<Orders> Orders { get; set; }
+
+    public DbSet<Log> Logs { get; set; }
    
 
     protected override void OnModelCreating(ModelBuilder builder)

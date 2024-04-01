@@ -26,6 +26,8 @@ namespace BookStore
 
             // Add services to the container.
             builder.Services.AddScoped<IBooks, BooksRepository>();
+            builder.Services.AddScoped<ICart, CartRepository>();
+            builder.Services.AddScoped<IOrders,OrdersRepository>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -35,6 +37,8 @@ namespace BookStore
             builder.Services.AddAuthentication();
 
             builder.Services.AddAuthorization();
+
+            
 
           
 
@@ -47,6 +51,7 @@ namespace BookStore
                     In = ParameterLocation.Header,
                     Name = "authorization",
                     Type = SecuritySchemeType.ApiKey,
+                    
 
                 });
                 op.OperationFilter<SecurityRequirementsOperationFilter>();
