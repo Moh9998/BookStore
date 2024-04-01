@@ -4,6 +4,7 @@ using BookStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStore.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class BookStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20240401072710_Editing_Shoping_Cart")]
+    partial class Editing_Shoping_Cart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +68,7 @@ namespace BookStore.Migrations
                             Author = "F. Scott Fitzgerald",
                             Avalibality = true,
                             BooksInStock = 0,
-                            DateAded = new DateTime(2024, 4, 1, 10, 56, 36, 763, DateTimeKind.Local).AddTicks(4434),
+                            DateAded = new DateTime(2024, 4, 1, 10, 27, 9, 404, DateTimeKind.Local).AddTicks(4970),
                             Genre = "Fiction",
                             Price = 7.99m,
                             Title = "The Great Gatsby"
@@ -76,7 +79,7 @@ namespace BookStore.Migrations
                             Author = "William Golding",
                             Avalibality = true,
                             BooksInStock = 0,
-                            DateAded = new DateTime(2024, 4, 1, 10, 56, 36, 763, DateTimeKind.Local).AddTicks(4444),
+                            DateAded = new DateTime(2024, 4, 1, 10, 27, 9, 404, DateTimeKind.Local).AddTicks(4973),
                             Genre = "Fiction",
                             Price = 7.99m,
                             Title = "Lord of the Flies"
@@ -87,14 +90,14 @@ namespace BookStore.Migrations
                             Author = "Joydip Kanjilal",
                             Avalibality = true,
                             BooksInStock = 0,
-                            DateAded = new DateTime(2024, 4, 1, 10, 56, 36, 763, DateTimeKind.Local).AddTicks(4451),
+                            DateAded = new DateTime(2024, 4, 1, 10, 27, 9, 404, DateTimeKind.Local).AddTicks(4975),
                             Genre = "Programming",
                             Price = 7.99m,
                             Title = "Asp.NetCore WebApiBuild Rubust backends"
                         });
                 });
 
-            modelBuilder.Entity("BookStore.Models.Users", b =>
+            modelBuilder.Entity("BookStore.Models.CartItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -102,41 +105,36 @@ namespace BookStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SecurityStamp")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ShoppingCartId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("ShoppingCartId");
+
+                    b.ToTable("CartItems");
+                });
+
+            modelBuilder.Entity("BookStore.Models.ShoppingCart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShoppingCarts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -341,6 +339,13 @@ namespace BookStore.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BookStore.Models.CartItem", b =>
+                {
+                    b.HasOne("BookStore.Models.ShoppingCart", null)
+                        .WithMany("Items")
+                        .HasForeignKey("ShoppingCartId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -390,6 +395,11 @@ namespace BookStore.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BookStore.Models.ShoppingCart", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

@@ -26,7 +26,7 @@ namespace BookStore.Logic_Business.Repositories
                 Price = book.Price,
                 BooksInStock = book.BooksInStock,
                 Avalibality = book.Avalibality,
-                DateAded = book.DateAded
+                DateAded = DateTime.Now 
             };
             _context.Books.Add(NewBook);
             await _context.SaveChangesAsync();
@@ -88,7 +88,7 @@ namespace BookStore.Logic_Business.Repositories
 
                 if (existingBook == null)
                 {
-                    return null; // Book with the given ID not found
+                    return null; 
                 }
 
                 var type = typeof(Book);
@@ -103,7 +103,7 @@ namespace BookStore.Logic_Business.Repositories
                     }
                 }
 
-                // Save changes to the database
+                
                 await _context.SaveChangesAsync();
 
                 return existingBook;

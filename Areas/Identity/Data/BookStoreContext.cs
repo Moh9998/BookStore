@@ -14,6 +14,7 @@ public class StoreContext : IdentityDbContext<IdentityUser>
         
 
     public DbSet<Book> Books { get; set; }
+   
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -30,6 +31,7 @@ public class StoreContext : IdentityDbContext<IdentityUser>
                         Title = "The Great Gatsby",
                         Author = "F. Scott Fitzgerald",
                         Genre = "Fiction",
+                        BooksInStock= 10,
                         Price = 7.99M,
                         Avalibality = true,
                         DateAded = DateTime.Now
@@ -40,6 +42,7 @@ public class StoreContext : IdentityDbContext<IdentityUser>
                         Title = "Lord of the Flies",
                         Author = "William Golding",
                         Genre = "Fiction",
+                        BooksInStock=10,
                         Price = 7.99M,
                         Avalibality = true,
                         DateAded = DateTime.Now
@@ -51,6 +54,7 @@ public class StoreContext : IdentityDbContext<IdentityUser>
 "Build Rubust backends",
                         Author = "Joydip Kanjilal",
                         Genre = "Programming",
+                        BooksInStock=10,
                         Price = 7.99M,
                         Avalibality = true,
                         DateAded = DateTime.Now

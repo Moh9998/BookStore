@@ -1,7 +1,11 @@
 ﻿using BookStore.Logic_Business.Interfaces;
+using BookStore.Logic_Business.Repositories;
 using BookStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using System.Web.Http.ModelBinding;
 
 namespace BookStore.Controllers
 {
@@ -23,22 +27,36 @@ namespace BookStore.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<Book> GetBook(int id)
+        public async Task<ActionResult<Book>> GetBook(int id)
         {
-            return await _books.GetBook(id);
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("User is not authenticated");
+            }
+
+            // Your logic to get the book by id
+            var book = await _books.GetBook(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(book);
         }
+
 
         [HttpPost]
         public async Task<Book> AddBook(Book book)
         {
             return await _books.AddBook(book);
         }
-
+     
         [HttpPut("{id}")]
             public async Task<Book?> UpdateBook(int id, Book updatedBook)
         {
             return await _books.UpdateBook(id, updatedBook);
         }
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<Book> DeleteBook(int id)
         {

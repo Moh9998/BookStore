@@ -4,6 +4,11 @@ using BookStore.Data;
 using BookStore.Logic_Business.Repositories;
 using BookStore.Logic_Business.Interfaces;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Swashbuckle.AspNetCore.Filters;
+using Microsoft.OpenApi.Models;
 
 
 namespace BookStore
@@ -17,15 +22,36 @@ namespace BookStore
 
             builder.Services.AddDbContext<StoreContext>(options => options.UseSqlServer(connectionString));
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<StoreContext>();
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<StoreContext>();
 
             // Add services to the container.
             builder.Services.AddScoped<IBooks, BooksRepository>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+
+            
+            
+            builder.Services.AddAuthentication();
+
+            builder.Services.AddAuthorization();
+
+          
+
+
             //Add Swagger
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(op =>
+            {
+                op.AddSecurityDefinition("oauth2", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "authorization",
+                    Type = SecuritySchemeType.ApiKey,
+
+                });
+                op.OperationFilter<SecurityRequirementsOperationFilter>();
+
+            });
 
             
 
@@ -38,11 +64,12 @@ namespace BookStore
             }
 
             // Configure the HTTP request pipeline.
+            app.MapIdentityApi<IdentityUser>();
 
             app.UseHttpsRedirection();
 
             app.UseSwagger();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
