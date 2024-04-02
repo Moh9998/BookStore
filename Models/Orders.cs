@@ -1,8 +1,8 @@
 ﻿namespace BookStore.Models
 {
-    public class Orders : Cart
+    public class Orders 
     {
-        public int OrderId { get; set; }
+        public int Id { get; set; }
 
         public string OrderNumber { get; set; }
 

@@ -4,8 +4,18 @@ namespace BookStore.Logic_Business.Interfaces
 {
     public interface ICart
     {
-        public decimal TotalPrice { get; set; }
-        public void AddBook(Book book);
-        public void RemoveBook(Book book);
+        Task<Cart> GetCartByIdAsync(int cartId);
+
+        Task<Cart> CreateCartAsync();
+
+        Task AddBookToCartAsync(int cartId, Book book);
+
+        Task RemoveBookFromCartAsync(int cartId, Book book);
+
+        Task DeleteCartAsync(int cartId);
+
+        Task ClearCartAsync(int cartId);
+
+    
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
+using BookStore.Logic_Business;
 
 
 namespace BookStore
@@ -28,6 +29,8 @@ namespace BookStore
             builder.Services.AddScoped<IBooks, BooksRepository>();
             builder.Services.AddScoped<ICart, CartRepository>();
             builder.Services.AddScoped<IOrders,OrdersRepository>();
+
+            
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -70,6 +73,9 @@ namespace BookStore
 
             // Configure the HTTP request pipeline.
             app.MapIdentityApi<IdentityUser>();
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
+           
 
             app.UseHttpsRedirection();
 

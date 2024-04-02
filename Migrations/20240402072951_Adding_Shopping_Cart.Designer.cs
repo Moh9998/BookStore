@@ -4,6 +4,7 @@ using BookStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStore.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class BookStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20240402072951_Adding_Shopping_Cart")]
+    partial class Adding_Shopping_Cart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,7 +73,7 @@ namespace BookStore.Migrations
                             Author = "F. Scott Fitzgerald",
                             Avalibality = true,
                             BooksInStock = 10,
-                            DateAded = new DateTime(2024, 4, 2, 11, 51, 43, 273, DateTimeKind.Local).AddTicks(7094),
+                            DateAded = new DateTime(2024, 4, 2, 10, 29, 50, 257, DateTimeKind.Local).AddTicks(2670),
                             Genre = "Fiction",
                             Price = 7.99m,
                             Title = "The Great Gatsby"
@@ -81,7 +84,7 @@ namespace BookStore.Migrations
                             Author = "William Golding",
                             Avalibality = true,
                             BooksInStock = 10,
-                            DateAded = new DateTime(2024, 4, 2, 11, 51, 43, 273, DateTimeKind.Local).AddTicks(7098),
+                            DateAded = new DateTime(2024, 4, 2, 10, 29, 50, 257, DateTimeKind.Local).AddTicks(2674),
                             Genre = "Fiction",
                             Price = 7.99m,
                             Title = "Lord of the Flies"
@@ -92,7 +95,7 @@ namespace BookStore.Migrations
                             Author = "Joydip Kanjilal",
                             Avalibality = true,
                             BooksInStock = 10,
-                            DateAded = new DateTime(2024, 4, 2, 11, 51, 43, 273, DateTimeKind.Local).AddTicks(7101),
+                            DateAded = new DateTime(2024, 4, 2, 10, 29, 50, 257, DateTimeKind.Local).AddTicks(2679),
                             Genre = "Programming",
                             Price = 7.99m,
                             Title = "Asp.NetCore WebApiBuild Rubust backends"
@@ -120,6 +123,11 @@ namespace BookStore.Migrations
                     b.Property<DateTime?>("DateUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -129,6 +137,10 @@ namespace BookStore.Migrations
                     b.HasKey("CartId");
 
                     b.ToTable("Carts");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Cart");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("BookStore.Models.Log", b =>
@@ -310,43 +322,6 @@ namespace BookStore.Migrations
                     b.HasKey("LogId");
 
                     b.ToTable("Logs");
-                });
-
-            modelBuilder.Entity("BookStore.Models.Orders", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OrderNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("paymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -545,6 +520,40 @@ namespace BookStore.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("BookStore.Models.Orders", b =>
+                {
+                    b.HasBaseType("BookStore.Models.Cart");
+
+                    b.Property<string>("CustomerEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("paymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("Orders");
                 });
 
             modelBuilder.Entity("BookStore.Models.Book", b =>

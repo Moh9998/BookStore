@@ -4,6 +4,7 @@ using BookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CSharp;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using System.Web.Http.ModelBinding;
 
@@ -29,6 +30,7 @@ namespace BookStore.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(int id)
         {
+            
             if (!User.Identity.IsAuthenticated)
             {
                 return Unauthorized("User is not authenticated");
