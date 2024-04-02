@@ -10,6 +10,7 @@ using System.Text;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
 using BookStore.Logic_Business;
+using Microsoft.Extensions.Options;
 
 
 namespace BookStore
@@ -54,10 +55,25 @@ namespace BookStore
                     In = ParameterLocation.Header,
                     Name = "authorization",
                     Type = SecuritySchemeType.ApiKey,
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+                    Scheme = "Bearer"
                     
-
                 });
                 op.OperationFilter<SecurityRequirementsOperationFilter>();
+                op.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                             Reference = new OpenApiReference
+                             {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                             }
+                        },
+                                    new string[] { }
+                    }
+                });
 
             });
 

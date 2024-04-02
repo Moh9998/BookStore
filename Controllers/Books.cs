@@ -31,10 +31,7 @@ namespace BookStore.Controllers
         public async Task<ActionResult<Book>> GetBook(int id)
         {
             
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Unauthorized("User is not authenticated");
-            }
+            
 
             var book = await _books.GetBook(id);
             if (book == null)
